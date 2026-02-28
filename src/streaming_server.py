@@ -1,10 +1,13 @@
+# 標準ライブラリ
 import io
+import socketserver
+from http import server
 from threading import Condition
+
+# 外部ライブラリ
 from picamera2 import Picamera2
 from picamera2.encoders import MJPEGEncoder
 from picamera2.outputs import FileOutput
-from http import server
-import socketserver
 
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
