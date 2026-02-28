@@ -51,30 +51,30 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_error(404)
             self.end_headers()
 
-# メイン処理
-print("=== MJPEGストリーミングサーバー ===")
+if __name__ == '__main__':
+    print("=== MJPEGストリーミングサーバー ===")
 
-print("1. カメラ初期化...")
-picam2 = Picamera2()
-config = picam2.create_video_configuration(main={"size": (640, 480)})
-picam2.configure(config)
+    print("1. カメラ初期化...")
+    picam2 = Picamera2()
+    config = picam2.create_video_configuration(main={"size": (640, 480)})
+    picam2.configure(config)
 
-print("2. ストリーミング開始...")
-output = StreamingOutput()
-picam2.start_recording(MJPEGEncoder(), FileOutput(output))
+    print("2. ストリーミング開始...")
+    output = StreamingOutput()
+    picam2.start_recording(MJPEGEncoder(), FileOutput(output))
 
-print("3. Webサーバー起動...")
-print()
-print("アクセス: http://<IPアドレス>:8000/stream.mjpg")
-print("停止: Ctr+C")
-print()
+    print("3. Webサーバー起動...")
+    print()
+    print("アクセス: http://<IPアドレス>:8000/stream.mjpg")
+    print("停止: Ctr+C")
+    print()
 
-try:
-    address = ('', 8000)
-    server = socketserver.ThreadingTCPServer(address, StreamingHandler)
-    server.serve_forever()
-except KeyboardInterrupt:
-    print("\n停止中...")
-finally:
-    picam2.stop_recording()
-    print("完了!")
+    try:
+        address = ('', 8000)
+        server = socketserver.ThreadingTCPServer(address, StreamingHandler)
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\n停止中...")
+    finally:
+        picam2.stop_recording()
+        print("完了!")
