@@ -201,5 +201,7 @@ cv2.destroyAllWindows()
 ## 参考資料
 
 - [Picamera2公式ドキュメント](https://datasheets.raspberrypi.com/camera/picamera2-manual.pdf)
+- [Picamera2 GitHubリポジトリ](https://github.com/raspberrypi/picamera2)
+- [MJPEGサーバーサンプル（streaming_server.pyのベース）](https://github.com/raspberrypi/picamera2/blob/main/examples/mjpeg_server.py)
 - [Arducam IMX219製品情報](https://www.arducam.com/90524.html)
 - [MJPEG Streaming Protocol](https://en.wikipedia.org/wiki/Motion_JPEG)
