@@ -10,11 +10,24 @@ from picamera2.encoders import MJPEGEncoder
 from picamera2.outputs import FileOutput
 
 class StreamingOutput(io.BufferedIOBase):
+    """
+    カメラからのJPEGフレームを受け取るバッファ。
+    io.BufferedIOBaseを継承することで、picamera2がファイルと同じように書き込める。
+    Conditionによりスレッド間の同期を行い、HTTPハンドラーが新フレームを待機できるようにする。
+    """
+
     def __init__(self):
+        # 最新のJPEGフレームを保存する変数
         self.frame = None
+        # スレッド間の待機・通知に使うCondition（ロック機能も兼ねる）
         self.condition = Condition()
 
     def write(self, buf):
+        """
+        picamera2から呼び出されるメソッド。io.BufferedIOBaseのwriteをオーバーライド。
+        新しいフレームを保存し、待機中の全HTTPスレッドに通知する。
+        with self.conditionでロックを取得・解放し、排他制御を行う。
+        """
         with self.condition:
             self.frame = buf
             self.condition.notify_all()
