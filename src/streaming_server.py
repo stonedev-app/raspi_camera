@@ -67,9 +67,12 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
                     self.wfile.write(frame)   # JPEGバイナリデータ
                     self.wfile.write(b'\r\n') # フレームの区切り（end_headers()とは別物）
 
-            except Exception as e:
-                # while Trueループはクライアント切断時の例外で終了する
+            except BrokenPipeError:
+                # クライアントが切断したときに発生する例外
                 print(f'クライアント切断: {self.client_address}')
+            except Exception as e:
+                # 予期しない例外はエラー内容も出力する
+                print(f'予期しないエラー: {self.client_address} {e}')
         else:
             # /stream.mjpg 以外のパスは404を返す（send_error()内部でend_headers()を呼ぶ）
             self.send_error(404)
