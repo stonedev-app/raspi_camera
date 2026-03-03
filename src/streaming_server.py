@@ -34,11 +34,15 @@ class StreamingOutput(io.BufferedIOBase):
 
 class StreamingHandler(server.BaseHTTPRequestHandler):
     """
-    HTTPリクエストを処理するクラス
+    HTTPリクエストを処理するクラス。BaseHTTPRequestHandlerを継承。
+    do_GET()はGETリクエスト受信時にフレームワークから自動で呼び出される。
     """
     def do_GET(self):
         if self.path == '/stream.mjpg':
-            # MJPEGストリーミング
+            # 外側のHTTPヘッダーを送信（最初に1回だけ）
+            # Age:0 はキャッシュなし、Cache-Control/Pragmaはブラウザ・プロキシへのキャッシュ禁止指示
+            # multipart/x-mixed-replace はMJPEGストリーミング用のContent-Type
+            # boundary=FRAME でフレームの区切り文字を指定
             self.send_response(200)
             self.send_header('Age', 0)
             self.send_header('Cache-Control', 'no-cache, private')
@@ -47,25 +51,28 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
 
             try:
+                # クライアントが切断するまでフレームを送り続ける
                 while True:
-                    # 新しいフレームを待つ
+                    # 新しいフレームが来るまで待機（Conditionがロック解放→待機→再取得を管理）
                     with output.condition:
                         output.condition.wait()
                         frame = output.frame
 
-                    # ブラウザに送信
+                    # 1フレーム分のミニヘッダーとJPEGデータを送信
+                    # 構造: --FRAME\r\n + ミニヘッダー + 空行 + JPEGデータ + \r\n
                     self.wfile.write(b'--FRAME\r\n')
                     self.send_header('Content-Type', 'image/jpeg')
                     self.send_header('Content-Length', len(frame))
-                    self.end_headers()
-                    self.wfile.write(frame)
-                    self.wfile.write(b'\r\n')
+                    self.end_headers()        # ミニヘッダーの終わり（空行を出力）
+                    self.wfile.write(frame)   # JPEGバイナリデータ
+                    self.wfile.write(b'\r\n') # フレームの区切り（end_headers()とは別物）
 
             except Exception as e:
+                # while Trueループはクライアント切断時の例外で終了する
                 print(f'クライアント切断: {self.client_address}')
         else:
+            # /stream.mjpg 以外のパスは404を返す（send_error()内部でend_headers()を呼ぶ）
             self.send_error(404)
-            self.end_headers()
 
 if __name__ == '__main__':
     print("=== MJPEGストリーミングサーバー ===")
