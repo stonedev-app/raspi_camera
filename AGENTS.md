@@ -22,16 +22,13 @@ make -C .make download
 
 ```bash
 # メインのストリーミングサーバー起動
-python streaming_server.py
+python src/streaming_server.py
 
 # カメラ動作確認（test.jpg を撮影）
-python test_camera.py
+python src/tools/test_camera.py
 
 # カメラ設定・解像度確認
-python check_resolution.py
-
-# 自動連続撮影（latest.jpg に1秒ごと上書き保存）
-python auto_capture.py
+python src/tools/check_resolution.py
 ```
 
 ストリーミングURL: `http://raspberrypi:8000/stream.mjpg`（ホスト名は環境に合わせて変更）
@@ -47,17 +44,6 @@ Picamera2 → MJPEGEncoder → StreamingOutput → ThreadingTCPServer → HTTP c
 - `StreamingOutput`（`io.BufferedIOBase`サブクラス）: カメラからJPEGフレームを受け取るバッファ。`threading.Condition`でスレッド間同期を行い、HTTPハンドラーが新フレームを待機できるようにする。
 - `StreamingHandler`（`BaseHTTPRequestHandler`）: `/stream.mjpg`へのGETリクエストに対し`multipart/x-mixed-replace`レスポンスを返し、フレームを無限送信し続ける。
 - `socketserver.ThreadingTCPServer`で複数クライアントの同時接続に対応。
-
-### 各スクリプトの役割
-
-| ファイル              | 用途                                                 |
-| --------------------- | ---------------------------------------------------- |
-| `streaming_server.py` | 本番用MJPEGストリーミングサーバー（ポート8000）      |
-| `streaming.py`        | StreamingOutput接続の動作確認テスト                  |
-| `simple_server.py`    | 静的ファイル配信用シンプルHTTPサーバー（ポート8000） |
-| `test_camera.py`      | カメラ基本動作確認（`test.jpg`を1枚撮影）            |
-| `auto_capture.py`     | 1秒間隔で`latest.jpg`に上書き撮影するループ          |
-| `check_resolution.py` | 現在のカメラ設定を表示                               |
 
 ## ハードウェア・環境
 
