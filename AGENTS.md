@@ -1,7 +1,6 @@
 ## 概要
 
-Raspberry Pi Zero W + Arducam IMX219 カメラを使用した MJPEG ストリーミングサーバープロジェクト。
-コードはPC上で開発し、rsyncでRaspberry Piに転送して実行する。
+README.md 参照。
 
 ## 開発ワークフロー
 
@@ -62,7 +61,4 @@ Picamera2 → MJPEGEncoder → StreamingOutput → ThreadingTCPServer → HTTP c
 
 ## ハードウェア・環境
 
-- Raspberry Pi OS Lite (Trixie)
-- Arducam IMX219（8MP、CSI接続）
-- `/boot/firmware/config.txt`に`camera_auto_detect=0`と`dtoverlay=imx219`が必要
-- Picamera2インストール: `sudo apt install -y python3-picamera2 --no-install-recommends`
+README.md の「セットアップ」セクション参照。
