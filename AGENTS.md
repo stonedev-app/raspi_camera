@@ -1,8 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Overview
+## 概要
 
 Raspberry Pi Zero W + Arducam IMX219 カメラを使用した MJPEG ストリーミングサーバープロジェクト。
 コードはPC上で開発し、rsyncでRaspberry Piに転送して実行する。
@@ -55,14 +51,14 @@ Picamera2 → MJPEGEncoder → StreamingOutput → ThreadingTCPServer → HTTP c
 
 ### 各スクリプトの役割
 
-| ファイル | 用途 |
-|---|---|
-| `streaming_server.py` | 本番用MJPEGストリーミングサーバー（ポート8000） |
-| `streaming.py` | StreamingOutput接続の動作確認テスト |
-| `simple_server.py` | 静的ファイル配信用シンプルHTTPサーバー（ポート8000） |
-| `test_camera.py` | カメラ基本動作確認（`test.jpg`を1枚撮影） |
-| `auto_capture.py` | 1秒間隔で`latest.jpg`に上書き撮影するループ |
-| `check_resolution.py` | 現在のカメラ設定を表示 |
+| ファイル              | 用途                                                 |
+| --------------------- | ---------------------------------------------------- |
+| `streaming_server.py` | 本番用MJPEGストリーミングサーバー（ポート8000）      |
+| `streaming.py`        | StreamingOutput接続の動作確認テスト                  |
+| `simple_server.py`    | 静的ファイル配信用シンプルHTTPサーバー（ポート8000） |
+| `test_camera.py`      | カメラ基本動作確認（`test.jpg`を1枚撮影）            |
+| `auto_capture.py`     | 1秒間隔で`latest.jpg`に上書き撮影するループ          |
+| `check_resolution.py` | 現在のカメラ設定を表示                               |
 
 ## ハードウェア・環境
 
