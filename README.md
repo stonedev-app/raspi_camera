@@ -82,7 +82,26 @@ sudo apt install -y python3-picamera2 --no-install-recommends
 
 [参考 「2.2. Installation and updating」](https://pip-assets.raspberrypi.com/categories/652-raspberry-pi-camera-module-2/documents/RP-008156-DS-2-picamera2-manual.pdf?disposition=inline)
 
-#### 5. ストリーミングサーバー起動
+#### 5. ソースコードの配置と起動
+
+##### 5-1. ~/Cameraフォルダを作成（Raspberry Pi側）
+
+```bash
+mkdir ~/Camera
+```
+
+##### 5-2. Makefileの設定（開発機側）
+
+`.make/Makefile` の `RASPI_HOST`・`RASPI_USER` を環境に合わせて編集
+（詳細は「開発環境 > Makefile」セクション参照）
+
+##### 5-3. ソースコードのアップロード（開発機側）
+
+```bash
+make -C .make upload
+```
+
+##### 5-4. ストリーミングサーバー起動（Raspberry Pi側）
 
 ```bash
 cd ~/Camera
