@@ -108,7 +108,7 @@ cd ~/Camera
 python src/streaming_server.py
 ```
 
-ブラウザで`http://raspberrypi:8000/stream.mjpg`にアクセスして映像確認
+ブラウザで`http://<RASPI_HOST>:8000/stream.mjpg`にアクセスして映像確認
 
 ## 開発環境
 
@@ -156,20 +156,20 @@ upload:
 #### ブラウザ
 
 ```
-http://raspberrypi:8000/stream.mjpg
+http://<RASPI_HOST>:8000/stream.mjpg
 ```
 
 #### HTMLに埋め込み
 
 ```html
-<img src="http://raspberrypi:8000/stream.mjpg" />
+<img src="http://<RASPI_HOST>:8000/stream.mjpg" />
 ```
 
 #### Python(OpenCV)
 
 ```python
 import cv2
-cap = cv2.VideoCapture('http://raspberrypi:8000/stream.mjpg')
+cap = cv2.VideoCapture('http://<RASPI_HOST>:8000/stream.mjpg')
 
 while True:
     ret, frame = cap.read()
