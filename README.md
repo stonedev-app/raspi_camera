@@ -1,16 +1,10 @@
 # Raspberry Pi カメラストリーミングサーバー
 
-Raspberry Pi Zero W + Arducam IMX219カメラを使用したMJPEGストリーミングサーバー。
-
-## プロジェクト概要
-
-### 目的
-
-- Raspberry Pi Zero Wでカメラ映像をリアルタイムストリーミング配信
+Raspberry Pi Zero 2 W + Arducam IMX219カメラを使用したMJPEGストリーミングサーバー。
 
 ## ハードウェア構成
 
-### Raspberry Pi Zero W
+### Raspberry Pi Zero 2 W
 
 - OS: Raspberry Pi OS Lite (Trixie)
 - カメラ: Arducam IMX219 (8MP, Sony IMX219センサー)
@@ -18,11 +12,13 @@ Raspberry Pi Zero W + Arducam IMX219カメラを使用したMJPEGストリーミ
 
 ## セットアップ
 
-### Raspberry Pi Zero W側
+### Raspberry Pi Zero 2 W側
 
 #### 1. カメラの接続
 
 Arducamカメラをカメラポート(CSI)に接続
+
+![カメラ接続](docs/images/camera-connection.jpg)
 
 #### 2. カメラ設定
 
@@ -68,25 +64,12 @@ sudo apt install -y python3-picamera2 --no-install-recommends
 
 ```bash
 cd ~/Camera
-python streaming_server.py
+python src/streaming_server.py
 ```
 
 ブラウザで`http://raspberrypi:8000/stream.mjpg`にアクセスして映像確認
 
 ## 開発環境
-
-### ディレクトリ構成
-
-```
-raspi_camera/
-  ├── .make/
-  │   └── Makefile          # rsync同期用
-  ├── .git/                 # Gitリポジトリ
-  ├── README.md             # このファイル
-  ├── streaming_server.py   # MJPEGストリーミングサーバー
-  ├── test_camera.py        # カメラ動作確認スクリプト
-  └── ...
-```
 
 ### Makefile
 
@@ -118,27 +101,6 @@ upload:
 	rsync -avz $(EXCLUDE_OPTS) $(LOCAL_DIR)/ $(RASPI_USER)@$(RASPI_HOST):$(REMOTE_DIR)/
 ```
 
-#### 設定項目の説明
-
-| 変数           | 説明                                          |
-| -------------- | --------------------------------------------- |
-| `RASPI_HOST`   | Raspberry Piのホスト名またはIPアドレス        |
-| `RASPI_USER`   | Raspberry Pi側のユーザー名                    |
-| `LOCAL_DIR`    | PC側のディレクトリ(相対パス)                  |
-| `REMOTE_DIR`   | Raspberry Pi側のディレクトリ                  |
-| `EXCLUDE_OPTS` | アップロード時に除外するファイル/ディレクトリ |
-
-#### Makefile記法のポイント
-
-##### タブ文字必須
-
-**重要**: コマンド行は必ず**タブ文字**でインデント(スペース不可)
-
-```makefile
-download:
-→rsync -avz ...    # ← この矢印がタブ文字
-```
-
 ## 技術仕様
 
 ### ストリーミング方式
@@ -147,24 +109,6 @@ download:
 - フォーマット: MJPEG (Motion JPEG)
 - 解像度: 640x480 (デフォルト)
 - フレームレート: 約30fps
-
-### MJPEGストリーミングの仕組み
-
-```
-[カメラ]
-  ↓ 撮影
-[MJPEGEncoder]
-  ↓ JPEG圧縮
-[StreamingOutput]
-  ↓ バッファリング
-[HTTPServer]
-  ↓ multipart/x-mixed-replace
-[ブラウザ/クライアント]
-```
-
-- 各フレームを独立したJPEG画像として送信
-- `boundary=FRAME`で区切りながら連続送信
-- 接続を保持したまま永遠に送信(ストリーミング)
 
 ### アクセス方法
 
