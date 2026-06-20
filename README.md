@@ -90,15 +90,19 @@ sudo apt install -y python3-picamera2 --no-install-recommends
 mkdir ~/Camera
 ```
 
-##### 5-2. Makefileの設定（開発機側）
+##### 5-2. sync.conf の設定（開発機側）
 
-`.make/Makefile` の `RASPI_HOST`・`RASPI_USER` を環境に合わせて編集
-（詳細は「開発環境 > Makefile」セクション参照）
+`sync.conf.example` をコピーして `RASPI_HOST`・`RASPI_USER` を環境に合わせて編集
+（詳細は「開発環境 > 同期スクリプト」セクション参照）
+
+```bash
+cp sync.conf.example sync.conf
+```
 
 ##### 5-3. ソースコードのアップロード（開発機側）
 
 ```bash
-make -C .make upload
+./sync.sh upload
 ```
 
 ##### 5-4. ストリーミングサーバー起動（Raspberry Pi側）
@@ -112,35 +116,34 @@ python src/streaming_server.py
 
 ## 開発環境
 
-### Makefile
+### 同期スクリプト
 
-#### 概要
+`sync.sh` で開発機と Raspberry Pi 間のファイル同期を行う。設定値は `sync.conf` に分離されている。
 
-`.make/Makefile`は、PCとRaspberry Pi間のファイル同期を自動化するためのツールです。rsyncを使用して差分転送を行います。
+#### 初回セットアップ
 
-#### Makefileの内容
-
-```makefile
-RASPI_HOST = raspberrypi
-RASPI_USER = pi
-LOCAL_DIR = ..
-REMOTE_DIR = ~/Camera
-
-EXCLUDE_OPTS = --exclude '.make' --exclude '.git' --exclude '.gitignore' --exclude '.DS_Store' --exclude '__pycache__' --exclude '*.pyc'
-
-.PHONY: download upload help
-
-help:
-	@echo "使い方:"
-	@echo "  make -C .make download  - Raspberry Piからファイルをダウンロード"
-	@echo "  make -C .make upload    - Raspberry Piにファイルをアップロード"
-
-download:
-	rsync -avz $(RASPI_USER)@$(RASPI_HOST):$(REMOTE_DIR)/ $(LOCAL_DIR)/
-
-upload:
-	rsync -avz $(EXCLUDE_OPTS) $(LOCAL_DIR)/ $(RASPI_USER)@$(RASPI_HOST):$(REMOTE_DIR)/
+```bash
+cp sync.conf.example sync.conf
+# sync.conf を編集して RASPI_HOST・RASPI_USER を設定
 ```
+
+#### 使い方
+
+```bash
+# 開発機 → Raspberry Pi へアップロード
+./sync.sh upload
+
+# Raspberry Pi → 開発機 へダウンロード
+./sync.sh download
+```
+
+#### sync.conf の設定項目
+
+| 変数 | 説明 |
+|---|---|
+| `RASPI_HOST` | Raspberry Pi のホスト名または IP アドレス |
+| `RASPI_USER` | Raspberry Pi のユーザー名 |
+| `REMOTE_DIR` | Raspberry Pi 上の同期先ディレクトリ |
 
 ## 技術仕様
 

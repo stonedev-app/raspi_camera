@@ -1,0 +1,3 @@
+RASPI_HOST=raspberrypi   # Raspberry Pi のホスト名または IP アドレス
+RASPI_USER=pi            # Raspberry Pi のユーザー名
+REMOTE_DIR='~/Camera'    # Raspberry Pi 上の同期先ディレクトリ

@@ -19,9 +19,9 @@
 ### Raspberry Piとのファイル同期
 
 ```bash
-# PC → Raspberry Pi へアップロード
-make -C .make upload
+# 開発機 → Raspberry Pi へアップロード
+./sync.sh upload
 
-# Raspberry Pi → PC へダウンロード
-make -C .make download
+# Raspberry Pi → 開発機 へダウンロード
+./sync.sh download
 ```
