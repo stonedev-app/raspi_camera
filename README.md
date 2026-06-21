@@ -2,8 +2,9 @@
 
 Raspberry Pi Zero 2 W + Arducam IMX219カメラを使用したMJPEGストリーミングサーバー
 
-- プロトコル: HTTP / フォーマット: MJPEG (Motion JPEG)
-- 解像度: 640x480 / フレームレート: 約30fps
+- プロトコル: HTTP
+- フォーマット: MJPEG (Motion JPEG)
+- 解像度: 640x480
 
 ## 1. システム構成
 
