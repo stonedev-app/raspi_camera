@@ -108,12 +108,7 @@ cd raspi_camera
 
 #### 2-2-2. sync.conf の設定
 
-`sync.conf.example` をコピーして `RASPI_HOST`・`RASPI_USER` を環境に合わせて編集
-（詳細は「3. ファイル同期」セクション参照）
-
-```bash
-cp sync.conf.example sync.conf
-```
+`3-1-1. sync.confをコピー`、`3-1-2. sync.confの設定`を実施
 
 #### 2-2-3. ソースコードをアップロード
 
@@ -148,7 +143,7 @@ python src/streaming_server.py
 cp sync.conf.example sync.conf
 ```
 
-#### 3-1-2. sync.confの内容を編集
+#### 3-1-2. sync.confの設定
 
 ##### 設定が必要な項目
 
