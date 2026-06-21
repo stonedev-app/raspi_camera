@@ -2,25 +2,31 @@
 
 Raspberry Pi Zero 2 W + Arducam IMX219カメラを使用したMJPEGストリーミングサーバー
 
-## ハードウェア構成
+- プロトコル: HTTP / フォーマット: MJPEG (Motion JPEG)
+- 解像度: 640x480 / フレームレート: 約30fps
+
+## 1. システム構成
 
 ### Raspberry Pi Zero 2 W
 
 - OS: Raspberry Pi OS Lite (Trixie)
 - カメラ: Arducam IMX219 (8MP, Sony IMX219センサー)
-- 接続: Wi-Fi経由でネットワーク接続
 
-## セットアップ
+### Mac
 
-### Raspberry Pi Zero 2 W側
+- 作業用マシン
 
-#### 1. カメラの接続
+## 2. 環境構築手順
 
-##### Arducamカメラをカメラポート(CSI)に接続
+### 2-1. Raspberry Pi Zero 2 W 側の手順
+
+#### 2-1-1. カメラの接続
+
+Arducamカメラをカメラポート(CSI)に接続
 
 ![カメラ接続](docs/images/camera-connection.jpg)
 
-#### 2. カメラ設定
+#### 2-1-2. カメラ設定
 
 `/boot/firmware/config.txt`を編集
 
@@ -50,7 +56,7 @@ sudo reboot
 
 [参考 「SOFTWARE SETTING」](https://blog.arducam.com/downloads/arducam_imx219_for_pi_start_guide.pdf)
 
-#### 3. カメラ認識確認
+#### 2-1-3. カメラ認識確認
 
 ```bash
 rpicam-hello --list-cameras
@@ -72,7 +78,7 @@ Available cameras
                       3280x2464 [21.19 fps - (0, 0)/3280x2464 crop]
 ```
 
-#### 4. Picamera2インストール
+#### 2-1-4. Picamera2インストール
 
 ```bash
 sudo apt update
@@ -82,93 +88,100 @@ sudo apt install -y python3-picamera2 --no-install-recommends
 
 [参考 「2.2. Installation and updating」](https://pip-assets.raspberrypi.com/categories/652-raspberry-pi-camera-module-2/documents/RP-008156-DS-2-picamera2-manual.pdf?disposition=inline)
 
-#### 5. ソースコードの配置と起動
-
-##### 5-1. ~/Cameraフォルダを作成（Raspberry Pi側）
+#### 2-1-5. ~/Cameraフォルダを作成
 
 ```bash
 mkdir ~/Camera
 ```
 
-##### 5-2. sync.conf の設定（開発機側）
+※ソースファイル格納用
+
+### 2-2. Mac 側の手順
+
+#### 2-2-1. リポジトリをクローン
+
+```bash
+git clone https://github.com/stonedev-app/raspi_camera.git
+cd raspi_camera
+```
+
+#### 2-2-2. sync.conf の設定
 
 `sync.conf.example` をコピーして `RASPI_HOST`・`RASPI_USER` を環境に合わせて編集
-（詳細は「開発環境 > 同期スクリプト」セクション参照）
+（詳細は「3. ファイル同期」セクション参照）
 
 ```bash
 cp sync.conf.example sync.conf
 ```
 
-##### 5-3. ソースコードのアップロード（開発機側）
+#### 2-2-3. ソースコードをアップロード
 
 ```bash
 ./sync.sh upload
 ```
 
-##### 5-4. ストリーミングサーバー起動（Raspberry Pi側）
+### 2-3. 動作確認
+
+#### 2-3-1. ストリーミングサーバー起動
+
+Raspberry Piで以下のコマンドを実行
 
 ```bash
 cd ~/Camera
 python src/streaming_server.py
 ```
 
-ブラウザで`http://<RASPI_HOST>:8000/stream.mjpg`にアクセスして映像確認
+#### 2-3-2. ブラウザでカメラ画像確認
 
-## 開発環境
+ブラウザで`http://<RASPI_HOST>:8000/stream.mjpg`にアクセス
 
-### 同期スクリプト
+## 3. ファイル同期
 
-`sync.sh` で開発機と Raspberry Pi 間のファイル同期を行う。設定値は `sync.conf` に分離されている。
+`sync.sh` でMacと Raspberry Pi 間のファイル同期を行う
 
-#### 初回セットアップ
+### 3-1. 初回設定手順
+
+#### 3-1-1. sync.confをコピー
 
 ```bash
 cp sync.conf.example sync.conf
-# sync.conf を編集して RASPI_HOST・RASPI_USER を設定
 ```
 
-#### 使い方
+#### 3-1-2. sync.confの内容を編集
 
-```bash
-# 開発機 → Raspberry Pi へアップロード
-./sync.sh upload
+##### 設定が必要な項目
 
-# Raspberry Pi → 開発機 へダウンロード
-./sync.sh download
-```
-
-#### sync.conf の設定項目
-
-| 変数 | 説明 |
+| 項目名 | 説明 |
 |---|---|
 | `RASPI_HOST` | Raspberry Pi のホスト名または IP アドレス |
 | `RASPI_USER` | Raspberry Pi のユーザー名 |
 | `REMOTE_DIR` | Raspberry Pi 上の同期先ディレクトリ |
 
-## 技術仕様
+### 3-2. 使い方
 
-### ストリーミング方式
+```bash
+# Mac → Raspberry Pi へアップロード
+./sync.sh upload
 
-- プロトコル: HTTP
-- フォーマット: MJPEG (Motion JPEG)
-- 解像度: 640x480 (デフォルト)
-- フレームレート: 約30fps
+# Raspberry Pi → Mac へダウンロード
+./sync.sh download
+```
 
-### アクセス方法
+## 4. カメラ画像の取得方法
 
-#### ブラウザ
+### ブラウザ
 
 ```
 http://<RASPI_HOST>:8000/stream.mjpg
 ```
 
-#### HTMLに埋め込み
+### HTMLに埋め込み
 
 ```html
 <img src="http://<RASPI_HOST>:8000/stream.mjpg" />
 ```
 
-#### Python(OpenCV)
+### Python(OpenCV)
 
 ```python
 import cv2
@@ -186,7 +199,7 @@ cap.release()
 cv2.destroyAllWindows()
 ```
 
-## 参考資料
+## 5. 参考資料
 
 - [Picamera2公式ドキュメント](https://datasheets.raspberrypi.com/camera/picamera2-manual.pdf)
 - [Picamera2 GitHubリポジトリ](https://github.com/raspberrypi/picamera2)
