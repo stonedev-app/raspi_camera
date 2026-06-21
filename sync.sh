@@ -18,6 +18,7 @@ EXCLUDE_OPTS=(
   --exclude 'sync.conf'
   --exclude '__pycache__'
   --exclude '*.pyc'
+  --exclude '.venv'
 )
 
 case "$1" in
