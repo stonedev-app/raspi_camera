@@ -163,21 +163,21 @@ cp sync.conf.example sync.conf
 ./sync.sh download
 ```
 
-## 4. カメラ画像の取得方法
+## 4. カメラ画像の利用方法
 
-### ブラウザ
+### 4-1. ブラウザ
 
 ```
 http://<RASPI_HOST>:8000/stream.mjpg
 ```
 
-### HTMLに埋め込み
+### 4-2. HTML
 
 ```html
 <img src="http://<RASPI_HOST>:8000/stream.mjpg" />
 ```
 
-### Python(OpenCV)
+### 4-3. Python
 
 ```python
 import cv2
